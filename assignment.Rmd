@@ -13,6 +13,7 @@ library(tidyverse)
 library(R.matlab)
 library(rnassqs)
 require(gridExtra)
+require(mapview)
 #https://fedakd.github.io/weather_corn_regressions/assignment.html
 ```
 
@@ -436,7 +437,7 @@ grid.arrange(p1, p2)
 
 ### Answer 5
 
-Blah
+I opted to analyze soybeans in Buena Vista County, IA as a time-series. It shows similar pattern as corn in Iowa increasing yield over time with an optimal mean summer max temperature range. The strongest model included `year` and `mean summer max temperature` as the only predictor variables, though including the square of mean summer max temperature was also a strong model (AIC of 329 and 330.1, respectively). In the first model, both variables were significant while only year was significant in the second model.
 
 ### Bonus: Find a package to make a county map of Iowa displaying some sort of information about yields or weather. Interpret your map.
 
