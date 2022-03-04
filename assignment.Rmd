@@ -14,6 +14,7 @@ library(R.matlab)
 library(rnassqs)
 require(gridExtra)
 require(mapview)
+library(usmap)
 #https://fedakd.github.io/weather_corn_regressions/assignment.html
 ```
 
@@ -344,7 +345,7 @@ grid.arrange(p1, p2)
 
 ### Answer 4
 
-Modeling county as a factor across all years in a panel regression does make our temperature variables (`mean summer max T` and `mean summer max T^2`) highly significant (p<0.001). It does drastically increase our AIC to 36,402 due to the increased number of predictor variables. This suggests that over the entire study area, `mean max summer temperature` is a much better predictor of corn `yield` than the individual `county`.
+Modeling county as a factor across all years in a panel regression does make our temperature variables (`mean summer max T` and `mean summer max T^2`) highly significant (p<0.001). It does drastically increase our AIC to 36,402 due to the increased number of predictor variables. This suggests that over the entire study area, `mean max summer temperature` is a much better predictor of corn `yield` than the individual `county`. Additionally, our adjusted R-squared drops to 0.2382, which indicates that this model is a poor predictor of yield.
 
 ### Question 5 Soybeans
 
@@ -441,4 +442,29 @@ I opted to analyze soybeans in Buena Vista County, IA as a time-series. It shows
 
 ### Bonus: Find a package to make a county map of Iowa displaying some sort of information about yields or weather. Interpret your map.
 
-### Bonus #2: Challenge question - map trends in corn yields by county across Iowa. Interpret your map.
+```{r}
+#Creating map using usmap package and library. FIPS codes are county_ansi + 19000 in Iowa
+#Using total summed corn harvested over study period
+corn_sum <- cornyields %>%
+  group_by(county_name) %>%
+  mutate(corn = sum(yield)) %>%
+  distinct(county_name, .keep_all=T)
+corn_sum <- subset(corn_sum, select = -c(yield, year))
+corn_sum$fips <- corn_sum$county_ansi + 19000
+
+plot_usmap(data=corn_sum, values="corn", include="IA", color="yellow") +
+  scale_fill_continuous(name="Bushels/Acre") +
+  labs(title="Corn Harvested by County", subtitle="Iowa, 1981-2021") +
+  theme(legend.position = "left")
+
+```
+
+### Bonus #2: Challenge question
+
+Map trends in corn yields by county across Iowa. Interpret your map.
+
+### Bonus Answer 2
+
+What we see in the above map, which sums total corn harvested across the 1981-2021 study period, is that the highest yield of corn is in the north-central part of the state. The lowest corn yield occurs along the southern border with Missouri, while the western border along South Dakota and Nebraska is another low-yield area. I was surprised that the counties containing Des Moines and Cedar Rapids did not have lower yields.
+
+An additional useful metric would be to convert this into total bushels of corn instead of its current density unit of bushels/acre. 
